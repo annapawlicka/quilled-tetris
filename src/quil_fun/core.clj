@@ -9,17 +9,30 @@
 (def y-state (atom [{:x 0 :y 0}]))
 
 (defn add-piece []
-  (swap! y-state conj {:x (rand-int xmax) :y 0}))
+  (swap! y-state conj {:x (rand-int 5) :y 0}))
 
 (defn update-state [state]
   (let [[fst & rst] state
         update-fst (update-in fst [:y] + step)]
     (cons update-fst rst)))
 
+(defn collide [piece-1 piece-2]
+  (and (= (:x piece-1) (:x piece-2))
+       (= (+ 10 (:y piece-1)) (:y piece-2))))
+
+(defn check-collision []
+  (let [moving-piece (first @y-state)
+        others (rest @y-state)]
+    (some #(collide moving-piece %) others)))
+
+(defn bottom? []
+  (let [moving-piece (first @y-state)]
+    (= ymax (:y moving-piece))))
 
 (defn update-pieces []
   (swap! y-state update-state)
-  (when (zero? (mod (frame-count) (/ ymax step)))
+  (when (or (bottom?)
+            (check-collision))
     (add-piece)))
 
 (defn setup []
