@@ -1,15 +1,16 @@
 (ns quil-fun.core
   (:use quil.core))
 
-(def xmax 323)
+(def xmax 30)
 (def ymax 200)
+(def piece-width 5)
 
 (def step 10)
 
 (def y-state (atom [{:x 0 :y 0}]))
 
 (defn add-piece []
-  (swap! y-state conj {:x (rand-int 5) :y 0}))
+  (swap! y-state conj {:x (* (rand-int (/ xmax piece-width)) piece-width) :y 0}))
 
 (defn update-state [state]
   (let [[fst & rst] state
@@ -51,7 +52,7 @@
 
 
   (doseq [piece @y-state]
-    (rect (:x piece) (:y piece) 4 10))) ;;Draw a circle at x y with the correct diameter
+    (rect (:x piece) (:y piece) 5 10))) ;;Draw a circle at x y with the correct diameter
 
 (defsketch example                  ;;Define a new sketch named example
   :title "Oh so many grey circles"  ;;Set the title of the sketch
